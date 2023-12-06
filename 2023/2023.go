@@ -6,4 +6,5 @@ import (
 	_ "github.com/friedemannf/advent_of_code/2023/03"
 	_ "github.com/friedemannf/advent_of_code/2023/04"
 	_ "github.com/friedemannf/advent_of_code/2023/05"
+	_ "github.com/friedemannf/advent_of_code/2023/06"
 )
