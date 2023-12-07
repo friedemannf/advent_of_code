@@ -26,21 +26,16 @@ func calcRecords1(t, record int) int {
 }
 
 func calcRecords2(t, record int) int {
-	num1 := 0
-	num2 := 0
+	// Calculate the lowest hold duration that breaks the record.
+	// No need to calculate the highest hold duration as it's symmetric.
+	num := 0
 	for i := 0; i < t; i++ {
 		if calcDistance(i, t) > record {
-			num1 = i
+			num = i
 			break
 		}
 	}
-	for i := t; i >= 0; i-- {
-		if calcDistance(i, t) > record {
-			num2 = i
-			break
-		}
-	}
-	return num2 - num1 + 1
+	return t - num*2 + 1
 }
 
 func solution1(calc func(int, int) int) day.Solution {
@@ -54,7 +49,6 @@ func solution1(calc func(int, int) int) day.Solution {
 			record, _ := strconv.Atoi(records[i])
 			sum *= calc(time, record)
 		}
-
 		return sum, nil
 	}
 }
