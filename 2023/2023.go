@@ -8,4 +8,5 @@ import (
 	_ "github.com/friedemannf/advent_of_code/2023/05"
 	_ "github.com/friedemannf/advent_of_code/2023/06"
 	_ "github.com/friedemannf/advent_of_code/2023/07"
+	_ "github.com/friedemannf/advent_of_code/2023/08"
 )
