@@ -9,4 +9,5 @@ import (
 	_ "github.com/friedemannf/advent_of_code/2023/06"
 	_ "github.com/friedemannf/advent_of_code/2023/07"
 	_ "github.com/friedemannf/advent_of_code/2023/08"
+	_ "github.com/friedemannf/advent_of_code/2023/09"
 )
