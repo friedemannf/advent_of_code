@@ -2,6 +2,7 @@ package day3
 
 import (
 	"github.com/friedemannf/advent_of_code/day"
+	"github.com/friedemannf/advent_of_code/util"
 )
 
 func init() {
@@ -100,47 +101,6 @@ func adjacentCells(lines []string, x, y int) []uint8 {
 	return res
 }
 
-func adjacentCellsT[T any](lines [][]T, x, y int) []T {
-	res := make([]T, 0, 8)
-	// 5 3 6
-	// 1 X 2
-	// 7 4 8
-
-	// 1
-	if x > 0 {
-		res = append(res, lines[y][x-1])
-	}
-	// 2
-	if x < len(lines[y])-1 {
-		res = append(res, lines[y][x+1])
-	}
-	// 3
-	if y > 0 {
-		res = append(res, lines[y-1][x])
-	}
-	// 4
-	if y < len(lines)-1 {
-		res = append(res, lines[y+1][x])
-	}
-	// 5
-	if x > 0 && y > 0 {
-		res = append(res, lines[y-1][x-1])
-	}
-	// 6
-	if x < len(lines[y])-1 && y > 0 {
-		res = append(res, lines[y-1][x+1])
-	}
-	// 7
-	if x > 0 && y < len(lines)-1 {
-		res = append(res, lines[y+1][x-1])
-	}
-	// 8
-	if x < len(lines[y])-1 && y < len(lines)-1 {
-		res = append(res, lines[y+1][x+1])
-	}
-	return res
-}
-
 type partnumber int
 
 func solution2(ctx day.Context, lines []string) (any, error) {
@@ -185,7 +145,7 @@ func solution2(ctx day.Context, lines []string) (any, error) {
 	for y, line := range lines {
 		for x, char := range line {
 			if char == '*' {
-				adjacentCells := adjacentCellsT(grid, x, y)
+				adjacentCells := util.AdjacentCells(grid, x, y, nil)
 				adjacentParts := make(map[*partnumber]*partnumber)
 				for _, adjacentCell := range adjacentCells {
 					if adjacentCell != nil {
