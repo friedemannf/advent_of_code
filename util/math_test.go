@@ -46,3 +46,36 @@ func TestPower(t *testing.T) {
 		})
 	}
 }
+
+func TestAbs(t *testing.T) {
+	type args[T interface{ ~int }] struct {
+		n T
+	}
+	type testCase[T interface{ ~int }] struct {
+		name string
+		args args[T]
+		want T
+	}
+	tests := []testCase[int]{
+		{
+			name: "",
+			args: args[int]{
+				n: 42,
+			},
+			want: 42,
+		}, {
+			name: "",
+			args: args[int]{
+				n: -42,
+			},
+			want: 42,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Abs(tt.args.n); got != tt.want {
+				t.Errorf("Abs() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

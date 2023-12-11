@@ -11,4 +11,5 @@ import (
 	_ "github.com/friedemannf/advent_of_code/2023/08"
 	_ "github.com/friedemannf/advent_of_code/2023/09"
 	_ "github.com/friedemannf/advent_of_code/2023/10"
+	_ "github.com/friedemannf/advent_of_code/2023/11"
 )
