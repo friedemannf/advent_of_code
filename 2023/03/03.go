@@ -41,21 +41,21 @@ func solution1(ctx day.Context, lines []string) (any, error) {
 				if currPart > 0 {
 					if adjacent {
 						sum += currPart
-						// ctx.PrintDebug(color.GreenString("%v", currPart))
+						// ctx.Print(color.GreenString("%v", currPart))
 					} else {
-						// ctx.PrintDebug(color.WhiteString("%v", currPart))
+						// ctx.Print(color.WhiteString("%v", currPart))
 					}
 					currPart = 0
 					adjacent = false
 				}
 				if char == '.' {
-					// ctx.PrintDebug(color.HiBlackString("%c", char))
+					// ctx.Print(color.HiBlackString("%c", char))
 				} else if x != len(line)-1 {
-					// ctx.PrintDebug(color.RedString("%c", char))
+					// ctx.Print(color.RedString("%c", char))
 				}
 			}
 		}
-		// ctx.PrintDebug("\n")
+		// ctx.Print("\n")
 	}
 	return sum, nil
 }
@@ -130,16 +130,16 @@ func solution2(ctx day.Context, lines []string) (any, error) {
 			}
 		}
 	}
-	/*ctx.PrintDebug("Pointers:\n")
+	/*ctx.Print("Pointers:\n")
 	  for _, line := range grid {
 	  	for _, part := range line {
 	  		if part != nil {
-	  			ctx.PrintDebug(color.GreenString("X"))
+	  			ctx.Print(color.GreenString("X"))
 	  		} else {
-	  			ctx.PrintDebug(color.WhiteString("."))
+	  			ctx.Print(color.WhiteString("."))
 	  		}
 	  	}
-	  	ctx.PrintDebug("\n")
+	  	ctx.Print("\n")
 	  }*/
 	sum := 0
 	for y, line := range lines {

@@ -10,9 +10,15 @@ type Context struct {
 	Debug bool
 }
 
-func (c Context) PrintDebug(a ...any) {
+func (c Context) Print(a ...any) {
 	if c.Debug {
 		fmt.Print(a...)
+	}
+}
+
+func (c Context) Println(a ...any) {
+	if c.Debug {
+		fmt.Println(a...)
 	}
 }
 

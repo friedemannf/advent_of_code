@@ -20,5 +20,5 @@
 # Go workspace file
 go.work
 
-input.txt
-example.txt
+input*.txt
+example*.txt
