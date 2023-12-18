@@ -6,6 +6,7 @@ require (
 	github.com/fatih/color v1.16.0
 	github.com/schollz/progressbar/v3 v3.14.1
 	github.com/stretchr/testify v1.8.4
+	golang.org/x/exp v0.0.0-20231214170342-aacd6d4b4611
 )
 
 require (

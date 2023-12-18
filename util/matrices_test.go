@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -109,5 +110,41 @@ func TestConnectingCells(t *testing.T) {
 				t.Errorf("ConnectingCells() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestMatrix_MinMax(t *testing.T) {
+	m := NewMatrix[int]()
+	m.Set(0, 0, 1)
+	m.Set(1, 0, 2)
+	m.Set(2, 0, 3)
+	m.Set(3, 0, 4)
+	m.Set(4, 0, 5)
+	m.Set(4, 1, 6)
+	m.Set(4, 2, 7)
+	m.Set(4, 3, 8)
+	m.Set(3, 4, 9)
+	m.Set(2, 5, 1)
+
+	fmt.Println(m)
+
+	fmt.Println(m.Get(0, 0))
+	fmt.Println(m.Get(4, 0))
+	fmt.Println(m.Get(5, 0))
+	fmt.Println(m.Get(4, 4))
+
+	fmt.Println(m.MinMax())
+
+	m.Set(-1, -1, 1)
+	m.Set(-2, -2, 2)
+	m.Set(-2, -3, 3)
+	m.Set(-3, -4, 4)
+	m.Set(-4, -4, 5)
+	fmt.Println(m)
+	fmt.Println(m.MinMax())
+
+	fmt.Println("Rows:")
+	for _, v := range m.Rows() {
+		fmt.Println(v)
 	}
 }
