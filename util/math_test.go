@@ -79,3 +79,30 @@ func TestAbs(t *testing.T) {
 		})
 	}
 }
+
+func TestDigits(t *testing.T) {
+	type args[T interface{ Number }] struct {
+		n T
+	}
+	type testCase[T interface{ Number }] struct {
+		name string
+		args args[T]
+		want int
+	}
+	tests := []testCase[int64]{
+		{
+			name: "",
+			args: args[int64]{
+				n: int64(1234),
+			},
+			want: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Digits(tt.args.n); got != tt.want {
+				t.Errorf("Digits() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -102,7 +102,7 @@ func printMatrix(m [][]Char) {
 	}
 }
 
-func constructMatrix(lines []string) (matrix [][]Char, startX, startY int) {
+func constructMatrix(lines []string) (matrix util.Matrix[Char], startX, startY int) {
 	matrix = make([][]Char, len(lines))
 	for y, line := range lines {
 		for x, char := range line {
@@ -124,7 +124,7 @@ func solution1(ctx day.Context, lines []string) (any, error) {
 	x, y := startX, startY
 	for x != startX || y != startY || steps == 0 {
 		// Get the adjacent cells (Top, Left, Right, Bottom)
-		adj := util.ConnectingCells(m, x, y, new(Char))
+		adj := m.ConnectingCells(x, y, new(Char))
 		// Test all four directions whether they connect to the current cell
 		current := m[y][x]
 		m[y][x].Visited = true
@@ -169,7 +169,7 @@ func solution2(ctx day.Context, lines []string) (any, error) {
 	x, y := startX, startY
 	for x != startX || y != startY || steps == 0 {
 		// Get the adjacent cells
-		adj := util.ConnectingCells(m, x, y, new(Char))
+		adj := m.ConnectingCells(x, y, new(Char))
 		// Test all four directions whether they connect to the current cell
 		current := m[y][x]
 		m[y][x].Visited = true
@@ -227,7 +227,7 @@ func solution22(ctx day.Context, lines []string) (any, error) {
 	for x != startX || y != startY || steps == 0 {
 		path = append(path, []int{x, y})
 		// Get the adjacent cells
-		adj := util.ConnectingCells(m, x, y, new(Char))
+		adj := m.ConnectingCells(x, y, new(Char))
 		// Test all four directions whether they connect to the current cell
 		current := m[y][x]
 		m[y][x].Visited = true

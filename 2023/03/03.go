@@ -107,7 +107,7 @@ func solution2(ctx day.Context, lines []string) (any, error) {
 	// Doing two passes here
 	// First pass: create a grid of pointers to part numbers
 	// Second pass: iterate over grid and for every gear, check for adjacent parts
-	var grid [][]*partnumber
+	var grid util.Matrix[*partnumber]
 	// Holds the current part number/nil
 	// When reaching the end of a part number (either because of a non-digit or end of line), this is reset to nil
 	var currPart *partnumber
@@ -145,7 +145,7 @@ func solution2(ctx day.Context, lines []string) (any, error) {
 	for y, line := range lines {
 		for x, char := range line {
 			if char == '*' {
-				adjacentCells := util.AdjacentCells(grid, x, y, nil)
+				adjacentCells := grid.AdjacentCells(x, y, nil)
 				adjacentParts := make(map[*partnumber]*partnumber)
 				for _, adjacentCell := range adjacentCells {
 					if adjacentCell != nil {

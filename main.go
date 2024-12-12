@@ -11,7 +11,9 @@ import (
 	"github.com/friedemannf/advent_of_code/day"
 	"github.com/friedemannf/advent_of_code/util"
 
+	_ "github.com/friedemannf/advent_of_code/2015"
 	_ "github.com/friedemannf/advent_of_code/2023"
+	_ "github.com/friedemannf/advent_of_code/2024"
 )
 
 var (
@@ -25,12 +27,13 @@ var (
 )
 
 func main() {
+	red := color.New(color.FgRed).SprintFunc()
 	yellow := color.New(color.FgYellow).SprintFunc()
 	green := color.New(color.FgGreen).SprintFunc()
-
+	_ = red
 	flag.Parse()
 
-	color.Red("Advent of Code 2023")
+	color.Red("Advent of Code")
 	if *d == -1 {
 		*d = time.Now().Day()
 	}

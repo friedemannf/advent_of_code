@@ -1,11 +1,13 @@
 module github.com/friedemannf/advent_of_code
 
-go 1.21.4
+go 1.23
 
 require (
+	github.com/brunoga/deep v1.2.4
 	github.com/fatih/color v1.16.0
 	github.com/schollz/progressbar/v3 v3.14.1
 	github.com/stretchr/testify v1.8.4
+	golang.org/x/exp v0.0.0-20241204233417-43b7b7cde48d
 )
 
 require (
