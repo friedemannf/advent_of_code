@@ -8,8 +8,7 @@ import (
 func TestAdjacentCells(t *testing.T) {
 	type args[T comparable] struct {
 		matrix Matrix[T]
-		x      int
-		y      int
+		coord  Coordinate
 		oob    *T
 	}
 	type testCase[T comparable] struct {
@@ -22,17 +21,21 @@ func TestAdjacentCells(t *testing.T) {
 			name: "",
 			args: args[string]{
 				matrix: [][]string{{"1", "2", "3"}, {"4", "5", "6"}, {"7", "8", "9"}},
-				x:      1,
-				y:      1,
+				coord: Coordinate{
+					X: 1,
+					Y: 1,
+				},
 			},
 			want: []string{"1", "2", "3", "4", "6", "7", "8", "9"},
 		}, {
 			name: "",
 			args: args[string]{
 				matrix: [][]string{{"1", "2", "3"}, {"4", "5", "6"}, {"7", "8", "9"}},
-				x:      0,
-				y:      0,
-				oob:    nil,
+				coord: Coordinate{
+					X: 0,
+					Y: 0,
+				},
+				oob: nil,
 			},
 			want: []string{"2", "4", "5"},
 		}, {
@@ -45,16 +48,18 @@ func TestAdjacentCells(t *testing.T) {
 			name: "",
 			args: args[string]{
 				matrix: [][]string{{"1", "2", "3"}, {"4", "5", "6"}, {"7", "8", "9"}},
-				x:      0,
-				y:      0,
-				oob:    New("X"),
+				coord: Coordinate{
+					X: 0,
+					Y: 0,
+				},
+				oob: New("X"),
 			},
 			want: []string{"X", "X", "X", "X", "2", "X", "4", "5"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.args.matrix.AdjacentCells(tt.args.x, tt.args.y, tt.args.oob); !reflect.DeepEqual(got, tt.want) {
+			if got := tt.args.matrix.AdjacentCells(tt.args.coord, tt.args.oob); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("AdjacentCells() = %v, want %v", got, tt.want)
 			}
 		})
@@ -64,8 +69,7 @@ func TestAdjacentCells(t *testing.T) {
 func TestConnectingCells(t *testing.T) {
 	type args[T comparable] struct {
 		matrix Matrix[T]
-		x      int
-		y      int
+		coord  Coordinate
 		oob    *T
 	}
 	type testCase[T comparable] struct {
@@ -78,34 +82,40 @@ func TestConnectingCells(t *testing.T) {
 			name: "",
 			args: args[string]{
 				matrix: [][]string{{"1", "2", "3"}, {"4", "5", "6"}, {"7", "8", "9"}},
-				x:      1,
-				y:      1,
-				oob:    nil,
+				coord: Coordinate{
+					X: 1,
+					Y: 1,
+				},
+				oob: nil,
 			},
 			want: []string{"2", "4", "6", "8"},
 		}, {
 			name: "",
 			args: args[string]{
 				matrix: [][]string{{"1", "2", "3"}, {"4", "5", "6"}, {"7", "8", "9"}},
-				x:      2,
-				y:      1,
-				oob:    nil,
+				coord: Coordinate{
+					X: 2,
+					Y: 1,
+				},
+				oob: nil,
 			},
 			want: []string{"3", "5", "9"},
 		}, {
 			name: "",
 			args: args[string]{
 				matrix: [][]string{{"1", "2", "3"}, {"4", "5", "6"}, {"7", "8", "9"}},
-				x:      2,
-				y:      2,
-				oob:    New("X"),
+				coord: Coordinate{
+					X: 2,
+					Y: 2,
+				},
+				oob: New("X"),
 			},
 			want: []string{"6", "8", "X", "X"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.args.matrix.ConnectingCells(tt.args.x, tt.args.y, tt.args.oob); !reflect.DeepEqual(got, tt.want) {
+			if got := tt.args.matrix.ConnectingCells(tt.args.coord, tt.args.oob); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ConnectingCells() = %v, want %v", got, tt.want)
 			}
 		})

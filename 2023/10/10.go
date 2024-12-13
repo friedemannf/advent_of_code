@@ -2,7 +2,6 @@ package day10
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/fatih/color"
 
@@ -102,32 +101,33 @@ func printMatrix(m [][]Char) {
 	}
 }
 
-func constructMatrix(lines []string) (matrix util.Matrix[Char], startX, startY int) {
+func constructMatrix(lines []string) (matrix util.Matrix[Char], startCoord util.Coordinate) {
 	matrix = make([][]Char, len(lines))
 	for y, line := range lines {
 		for x, char := range line {
 			if char == 'S' {
-				startX, startY = x, y
+				startCoord.X = x
+				startCoord.Y = y
 			}
 			matrix[y] = append(matrix[y], Char{C: char})
 		}
 	}
-	return matrix, startX, startY
+	return matrix, startCoord
 }
 
 func solution1(ctx day.Context, lines []string) (any, error) {
-	m, startX, startY := constructMatrix(lines)
+	m, startCoord := constructMatrix(lines)
 	// printMatrix(m)
 
 	steps := 0
 	var previousMove Connectors
-	x, y := startX, startY
-	for x != startX || y != startY || steps == 0 {
+	currCoord := startCoord
+	for currCoord != startCoord || steps == 0 {
 		// Get the adjacent cells (Top, Left, Right, Bottom)
-		adj := m.ConnectingCells(x, y, new(Char))
+		adj := m.ConnectingCells(currCoord, new(Char))
 		// Test all four directions whether they connect to the current cell
-		current := m[y][x]
-		m[y][x].Visited = true
+		current := m[currCoord.Y][currCoord.X]
+		m[currCoord.Y][currCoord.X].Visited = true
 		// Top
 		// 1. Check if current cell connects to top
 		// 2. Check if adjacent cell to the top connects to bottom
@@ -135,22 +135,22 @@ func solution1(ctx day.Context, lines []string) (any, error) {
 		//    i.e. if the previous move was to move down, don't move up)
 		if current.ConnectsTo(Top) && adj[0].ConnectsTo(Bottom&^previousMove) {
 			previousMove = Top
-			y--
+			currCoord.Y--
 		} else
 		// Left
 		if current.ConnectsTo(Left) && adj[1].ConnectsTo(Right&^previousMove) {
 			previousMove = Left
-			x--
+			currCoord.X--
 		} else
 		// Right
 		if current.ConnectsTo(Right) && adj[2].ConnectsTo(Left&^previousMove) {
 			previousMove = Right
-			x++
+			currCoord.X++
 		} else
 		// Bottom
 		if current.ConnectsTo(Bottom) && adj[3].ConnectsTo(Top&^previousMove) {
 			previousMove = Bottom
-			y++
+			currCoord.Y++
 		}
 		steps++
 	}
@@ -161,37 +161,37 @@ func solution1(ctx day.Context, lines []string) (any, error) {
 }
 
 func solution2(ctx day.Context, lines []string) (any, error) {
-	m, startX, startY := constructMatrix(lines)
+	m, startCoord := constructMatrix(lines)
 	// printMatrix(m)
 
 	steps := 0
 	var previousMove Connectors
-	x, y := startX, startY
-	for x != startX || y != startY || steps == 0 {
+	currCoord := startCoord
+	for currCoord != startCoord || steps == 0 {
 		// Get the adjacent cells
-		adj := m.ConnectingCells(x, y, new(Char))
+		adj := m.ConnectingCells(currCoord, new(Char))
 		// Test all four directions whether they connect to the current cell
-		current := m[y][x]
-		m[y][x].Visited = true
+		current := m[currCoord.Y][currCoord.X]
+		m[currCoord.Y][currCoord.X].Visited = true
 		// Top
 		if current.ConnectsTo(Top) && adj[0].ConnectsTo(Bottom&^previousMove) {
 			previousMove = Top
-			y--
+			currCoord.Y--
 		} else
 		// Left
 		if current.ConnectsTo(Left) && adj[1].ConnectsTo(Right&^previousMove) {
 			previousMove = Left
-			x--
+			currCoord.X--
 		} else
 		// Right
 		if current.ConnectsTo(Right) && adj[2].ConnectsTo(Left&^previousMove) {
 			previousMove = Right
-			x++
+			currCoord.X++
 		} else
 		// Bottom
 		if current.ConnectsTo(Bottom) && adj[3].ConnectsTo(Top&^previousMove) {
 			previousMove = Bottom
-			y++
+			currCoord.Y++
 		}
 		steps++
 	}
@@ -217,61 +217,46 @@ func solution2(ctx day.Context, lines []string) (any, error) {
 }
 
 func solution22(ctx day.Context, lines []string) (any, error) {
-	m, startX, startY := constructMatrix(lines)
+	m, startCoord := constructMatrix(lines)
 	// printMatrix(m)
 
 	steps := 0
 	var previousMove Connectors
-	x, y := startX, startY
-	var path [][]int
-	for x != startX || y != startY || steps == 0 {
-		path = append(path, []int{x, y})
+	currCoord := startCoord
+	var path [][2]int
+	for currCoord != startCoord || steps == 0 {
+		path = append(path, [2]int{currCoord.X, currCoord.Y})
 		// Get the adjacent cells
-		adj := m.ConnectingCells(x, y, new(Char))
+		adj := m.ConnectingCells(currCoord, new(Char))
 		// Test all four directions whether they connect to the current cell
-		current := m[y][x]
-		m[y][x].Visited = true
+		current := m[currCoord.Y][currCoord.X]
+		m[currCoord.Y][currCoord.X].Visited = true
 		// Top
 		if current.ConnectsTo(Top) && adj[0].ConnectsTo(Bottom&^previousMove) {
 			previousMove = Top
-			y--
+			currCoord.Y--
 		} else
 		// Left
 		if current.ConnectsTo(Left) && adj[1].ConnectsTo(Right&^previousMove) {
 			previousMove = Left
-			x--
+			currCoord.X--
 		} else
 		// Right
 		if current.ConnectsTo(Right) && adj[2].ConnectsTo(Left&^previousMove) {
 			previousMove = Right
-			x++
+			currCoord.X++
 		} else
 		// Bottom
 		if current.ConnectsTo(Bottom) && adj[3].ConnectsTo(Top&^previousMove) {
 			previousMove = Bottom
-			y++
+			currCoord.Y++
 		}
 		steps++
 	}
 
 	// Using shoelace formula to calculate the area of the path
 	// And Pick's Theorem to calculate the number of contained points
-	area := shoelaceArea(path)
+	area := util.ShoelaceArea(path)
 
 	return area - float64(len(path))/2 + 1, nil
-}
-
-func shoelaceArea(path [][]int) float64 {
-	path = append(path, path[0])
-	area := .0
-	prevX, prevY := path[0][0], path[0][1]
-	for i, point := range path {
-		if i == 0 {
-			continue
-		}
-		x, y := point[0], point[1]
-		area += float64(prevX)*float64(y) - float64(prevY)*float64(x)
-		prevX, prevY = x, y
-	}
-	return math.Abs(area / 2)
 }

@@ -48,7 +48,7 @@ func solution2(_ day.Context, lines []string) (any, error) {
 	for y, line := range matrix {
 		for x, c := range line {
 			if c == 'A' {
-				ac := matrix.AdjacentCells(x, y, util.New(' '))
+				ac := matrix.AdjacentCells(util.Coordinate{X: x, Y: y}, util.New(' '))
 				if (string([]rune{ac[0], ac[7]}) == "MS" || string([]rune{ac[7], ac[0]}) == "MS") &&
 					(string([]rune{ac[5], ac[2]}) == "MS" || string([]rune{ac[2], ac[5]}) == "MS") {
 					sum++

@@ -4,6 +4,11 @@ func New[T any](e T) *T {
 	return &e
 }
 
+func Null[T any]() T {
+	n := new(T)
+	return *n
+}
+
 func Must[T any](t T, e any) T {
 	if e != nil {
 		switch t := e.(type) {

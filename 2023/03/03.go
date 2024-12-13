@@ -145,7 +145,7 @@ func solution2(ctx day.Context, lines []string) (any, error) {
 	for y, line := range lines {
 		for x, char := range line {
 			if char == '*' {
-				adjacentCells := grid.AdjacentCells(x, y, nil)
+				adjacentCells := grid.AdjacentCells(util.Coordinate{X: x, Y: y}, nil)
 				adjacentParts := make(map[*partnumber]*partnumber)
 				for _, adjacentCell := range adjacentCells {
 					if adjacentCell != nil {

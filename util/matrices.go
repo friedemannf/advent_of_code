@@ -9,7 +9,7 @@ import (
 
 type Matrix[T comparable] [][]T
 
-func (matrix Matrix[T]) AdjacentCells(x, y int, oob *T) []T {
+func (matrix Matrix[T]) AdjacentCells(coord Coordinate, oob *T) []T {
 	res := make([]T, 0, 8)
 	// 0 1 2
 	// 3 X 4
@@ -22,59 +22,59 @@ func (matrix Matrix[T]) AdjacentCells(x, y int, oob *T) []T {
 	}
 
 	// 1
-	if x > 0 && y > 0 {
-		res = append(res, matrix[y-1][x-1])
+	if coord.X > 0 && coord.Y > 0 {
+		res = append(res, matrix[coord.Y-1][coord.X-1])
 	} else {
 		appendIfOutOfBounds()
 	}
 	// 2
-	if y > 0 {
-		res = append(res, matrix[y-1][x])
+	if coord.Y > 0 {
+		res = append(res, matrix[coord.Y-1][coord.X])
 	} else {
 		appendIfOutOfBounds()
 	}
 	// 3
-	if x < len(matrix[y])-1 && y > 0 {
-		res = append(res, matrix[y-1][x+1])
+	if coord.X < len(matrix[coord.Y])-1 && coord.Y > 0 {
+		res = append(res, matrix[coord.Y-1][coord.X+1])
 	} else {
 		appendIfOutOfBounds()
 	}
 
 	// 4
-	if x > 0 {
-		res = append(res, matrix[y][x-1])
+	if coord.X > 0 {
+		res = append(res, matrix[coord.Y][coord.X-1])
 	} else {
 		appendIfOutOfBounds()
 	}
 	// 5
-	if x < len(matrix[y])-1 {
-		res = append(res, matrix[y][x+1])
+	if coord.X < len(matrix[coord.Y])-1 {
+		res = append(res, matrix[coord.Y][coord.X+1])
 	} else {
 		appendIfOutOfBounds()
 	}
 
 	// 6
-	if x > 0 && y < len(matrix)-1 {
-		res = append(res, matrix[y+1][x-1])
+	if coord.X > 0 && coord.Y < len(matrix)-1 {
+		res = append(res, matrix[coord.Y+1][coord.X-1])
 	} else {
 		appendIfOutOfBounds()
 	}
 	// 7
-	if y < len(matrix)-1 {
-		res = append(res, matrix[y+1][x])
+	if coord.Y < len(matrix)-1 {
+		res = append(res, matrix[coord.Y+1][coord.X])
 	} else {
 		appendIfOutOfBounds()
 	}
 	// 8
-	if x < len(matrix[y])-1 && y < len(matrix)-1 {
-		res = append(res, matrix[y+1][x+1])
+	if coord.X < len(matrix[coord.Y])-1 && coord.Y < len(matrix)-1 {
+		res = append(res, matrix[coord.Y+1][coord.X+1])
 	} else {
 		appendIfOutOfBounds()
 	}
 	return res
 }
 
-func (matrix Matrix[T]) ConnectingCells(x, y int, oob *T) []T {
+func (matrix Matrix[T]) ConnectingCells(coord Coordinate, oob *T) []T {
 	res := make([]T, 0, 4)
 	// x 0 x
 	// 1 X 2
@@ -87,26 +87,26 @@ func (matrix Matrix[T]) ConnectingCells(x, y int, oob *T) []T {
 	}
 
 	// 1
-	if y > 0 {
-		res = append(res, matrix[y-1][x])
+	if coord.Y > 0 {
+		res = append(res, matrix[coord.Y-1][coord.X])
 	} else {
 		appendIfOutOfBounds()
 	}
 	// 2
-	if x > 0 {
-		res = append(res, matrix[y][x-1])
+	if coord.X > 0 {
+		res = append(res, matrix[coord.Y][coord.X-1])
 	} else {
 		appendIfOutOfBounds()
 	}
 	// 3
-	if x < len(matrix[y])-1 {
-		res = append(res, matrix[y][x+1])
+	if coord.X < len(matrix[coord.Y])-1 {
+		res = append(res, matrix[coord.Y][coord.X+1])
 	} else {
 		appendIfOutOfBounds()
 	}
 	// 4
-	if y < len(matrix)-1 {
-		res = append(res, matrix[y+1][x])
+	if coord.Y < len(matrix)-1 {
+		res = append(res, matrix[coord.Y+1][coord.X])
 	} else {
 		appendIfOutOfBounds()
 	}
@@ -125,6 +125,16 @@ func (matrix Matrix[T]) Set(point Coordinate, to T) bool {
 	}
 	matrix[point.Y][point.X] = to
 	return true
+}
+
+func (matrix Matrix[T]) Get(point Coordinate) (T, bool) {
+	if len(matrix) < point.Y {
+		return Null[T](), false
+	}
+	if len(matrix[0]) < point.X {
+		return Null[T](), false
+	}
+	return matrix[point.Y][point.X], true
 }
 
 func (m Matrix[T]) ColorPrint(colors map[T]color.Attribute) {
@@ -253,6 +263,16 @@ func (matrix Matrix[T]) Transform(dir Modifier) (out [][]T) {
 	return out
 }
 
+func (matrix Matrix[T]) Iterate(f func(coordinate Coordinate, v T)) {
+	coordinate := Coordinate{}
+	for ; coordinate.Y < len(matrix); coordinate.Y++ {
+		for ; coordinate.X < len(matrix); coordinate.X++ {
+			v, _ := matrix.Get(coordinate)
+			f(coordinate, v)
+		}
+	}
+}
+
 type Coordinate struct {
 	X, Y int
 }
@@ -289,4 +309,48 @@ func (c Coordinate) DistanceTo(to Coordinate) Vector {
 		X: to.X - c.X,
 		Y: to.Y - c.Y,
 	}
+}
+
+type MChar int32
+
+func (m MChar) String() string {
+	switch m {
+	case 0:
+		return color.HiBlackString(".")
+	case '#':
+		return color.HiRedString("#")
+	case 'X':
+		return color.HiGreenString("X")
+	}
+	return string(m)
+}
+
+type Quadrant[T any] struct {
+	LenX, LenY int
+	Rows       [][]T
+}
+
+func (q *Quadrant[T]) Get(x, y int) (T, bool) {
+	var v T
+	if q.LenY <= y || q.LenX <= x {
+		return v, false
+	}
+	if len(q.Rows) <= y || len(q.Rows[y]) <= x {
+		return v, true
+	}
+	return q.Rows[y][x], true
+}
+
+func (q *Quadrant[T]) Set(x, y int, v T) {
+	if len(q.Rows) <= y {
+		for i := len(q.Rows); i <= y; i++ {
+			q.Rows = append(q.Rows, nil)
+		}
+	}
+	if len(q.Rows[y]) <= x {
+		q.Rows[y] = append(q.Rows[y], make([]T, x-len(q.Rows[y])+1)...)
+	}
+	q.Rows[y][x] = v
+	q.LenX = max(q.LenX, x+1)
+	q.LenY = max(q.LenY, y+1)
 }
