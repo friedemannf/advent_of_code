@@ -2,12 +2,21 @@ package util
 
 import (
 	"fmt"
+	"iter"
 	"slices"
 
 	"github.com/fatih/color"
 )
 
 type Matrix[T comparable] [][]T
+
+func MatrixFromLines(lines []string) Matrix[rune] {
+	m := Matrix[rune]{}
+	for _, line := range lines {
+		m = append(m, []rune(line))
+	}
+	return m
+}
 
 func (matrix Matrix[T]) AdjacentCells(coord Coordinate, oob *T) []T {
 	res := make([]T, 0, 8)
@@ -263,12 +272,17 @@ func (matrix Matrix[T]) Transform(dir Modifier) (out [][]T) {
 	return out
 }
 
-func (matrix Matrix[T]) Iterate(f func(coordinate Coordinate, v T)) {
-	coordinate := Coordinate{}
-	for ; coordinate.Y < len(matrix); coordinate.Y++ {
-		for ; coordinate.X < len(matrix); coordinate.X++ {
-			v, _ := matrix.Get(coordinate)
-			f(coordinate, v)
+func (matrix Matrix[T]) Iterate() iter.Seq2[Coordinate, T] {
+	return func(yield func(Coordinate, T) bool) {
+		coordinate := Coordinate{}
+		for coordinate.Y = 0; coordinate.Y < len(matrix); coordinate.Y++ {
+			for coordinate.X = 0; coordinate.X < len(matrix); coordinate.X++ {
+				fmt.Println(coordinate)
+				v, _ := matrix.Get(coordinate)
+				if !yield(coordinate, v) {
+					return
+				}
+			}
 		}
 	}
 }
@@ -303,6 +317,13 @@ func (c Coordinate) Sub(vec Vector) Coordinate {
 }
 
 type Vector Coordinate
+
+var (
+	VecUp    Vector = Vector{X: 0, Y: -1}
+	VecDown  Vector = Vector{X: 0, Y: 1}
+	VecLeft  Vector = Vector{X: -1, Y: 0}
+	VecRight Vector = Vector{X: 1, Y: 0}
+)
 
 func (c Coordinate) DistanceTo(to Coordinate) Vector {
 	return Vector{

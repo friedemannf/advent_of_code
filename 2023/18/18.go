@@ -57,7 +57,7 @@ func solution1(_ day.Context, lines []string) (any, error) {
 	previousV := 0
 	incoming := 0
 	crossed := 0
-	m.Iterate(func(coord util.Coordinate, v rune) {
+	for coord, v := range m.Iterate() {
 		if coord.Y != previousY {
 			// New line
 			previousY = coord.Y
@@ -88,7 +88,7 @@ func solution1(_ day.Context, lines []string) (any, error) {
 			}
 		}
 		previousV = int(v)
-	})
+	}
 	// fmt.Println(m)
 	return sum, nil
 }
