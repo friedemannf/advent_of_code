@@ -8,6 +8,7 @@ import (
 type Context struct {
 	context.Context
 	Debug bool
+	Input string
 }
 
 func (c Context) Print(a ...any) {

@@ -24,6 +24,7 @@ var (
 	iteration = flag.Int("i", 0, "iteration to run")
 	benchmark = flag.Int("bench", 1, "benchmark iterations")
 	debug     = flag.Bool("debug", false, "debug output")
+	input     = flag.String("input", "", "optional input passed to the implementation")
 )
 
 func main() {
@@ -69,6 +70,7 @@ func main() {
 		res, err = s(day.Context{
 			Context: context.Background(),
 			Debug:   *debug,
+			Input:   *input,
 		}, lines)
 	}
 	dur := time.Now().Sub(start)
