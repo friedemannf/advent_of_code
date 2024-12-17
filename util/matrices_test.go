@@ -3,6 +3,8 @@ package util
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestAdjacentCells(t *testing.T) {
@@ -277,6 +279,110 @@ func TestTransform(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if gotOut := tt.args.matrix.Transform(tt.args.dir); !reflect.DeepEqual(gotOut, tt.wantOut) {
 				t.Errorf("Transform() = %v, want %v", gotOut, tt.wantOut)
+			}
+		})
+	}
+}
+
+func TestMatrix_FloodFill(t *testing.T) {
+	type args struct {
+		coordinate Coordinate
+	}
+	type testCase[T comparable] struct {
+		name   string
+		matrix Matrix[T]
+		args   args
+		want   []Coordinate
+	}
+	tests := []testCase[int]{
+		{
+			name: "",
+			matrix: [][]int{
+				{0, 1, 1, 0},
+				{0, 1, 1, 0},
+				{0, 1, 0, 0},
+				{0, 0, 0, 0},
+			},
+			args: args{coordinate: Coordinate{
+				X: 1,
+				Y: 2,
+			}},
+			want: []Coordinate{
+				{1, 0},
+				{2, 0},
+				{1, 1},
+				{2, 1},
+				{1, 2},
+			},
+		}, {
+			name: "",
+			matrix: [][]int{
+				{0, 1, 1, 1},
+				{0, 1, 3, 1},
+				{2, 1, 1, 1},
+				{1, 2, 2, 0},
+			},
+			args: args{coordinate: Coordinate{
+				X: 2,
+				Y: 0,
+			}},
+			want: []Coordinate{
+				{1, 0},
+				{2, 0},
+				{3, 0},
+				{1, 1},
+				{3, 1},
+				{1, 2},
+				{2, 2},
+				{3, 2},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.matrix.FloodFill(tt.args.coordinate)
+			require.ElementsMatch(t, tt.want, got, "FloodFill() = %v, want %v", got, tt.want)
+		})
+	}
+}
+
+func TestMatrix_Height(t *testing.T) {
+	type testCase[T comparable] struct {
+		name      string
+		m         Matrix[T]
+		want      int
+		wantPanic bool
+	}
+	tests := []testCase[int]{
+		{
+			name: "",
+			m: [][]int{
+				{1, 2},
+				{3, 4},
+			},
+			want: 2,
+		},
+		{
+			name: "",
+			m: [][]int{
+				{1, 2},
+				{3},
+			},
+			want:      0,
+			wantPanic: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.wantPanic {
+				defer func() {
+					if r := recover(); r == nil {
+						t.Errorf("Expected a panic")
+					}
+				}()
+			}
+			if got := tt.m.Height(); got != tt.want {
+				t.Errorf("Height() = %v, want %v", got, tt.want)
 			}
 		})
 	}

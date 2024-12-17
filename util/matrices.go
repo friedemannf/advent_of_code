@@ -10,10 +10,46 @@ import (
 
 type Matrix[T comparable] [][]T
 
+// Width returns the width of the matrix (Y)
+// Returns 0 if the matrix is empty
+func (m Matrix[T]) Width() int {
+	return len(m)
+}
+
+// Height returns the height of the matrix (X)
+// Panics if the matrix is malformed, i.e. there are lines of different length
+func (m Matrix[T]) Height() int {
+	width := 0
+	for _, line := range m {
+		if width != 0 && len(line) != width {
+			panic("Invalid matrix")
+		}
+		width = len(line)
+	}
+	return width
+}
+
+func (matrix Matrix[T]) Copy() Matrix[T] {
+	m := make([][]T, len(matrix))
+	for i, l := range matrix {
+		m[i] = make([]T, len(l))
+		copy(m[i], l)
+	}
+	return m
+}
+
 func MatrixFromLines(lines []string) Matrix[rune] {
 	m := Matrix[rune]{}
 	for _, line := range lines {
 		m = append(m, []rune(line))
+	}
+	return m
+}
+
+func MakeMatrix[T comparable](height, width int) Matrix[T] {
+	m := make([][]T, height)
+	for i := range m {
+		m[i] = make([]T, width)
 	}
 	return m
 }
@@ -137,10 +173,13 @@ func (matrix Matrix[T]) Set(point Coordinate, to T) bool {
 }
 
 func (matrix Matrix[T]) Get(point Coordinate) (T, bool) {
-	if len(matrix) < point.Y {
+	if point.Y < 0 || point.X < 0 {
 		return Null[T](), false
 	}
-	if len(matrix[0]) < point.X {
+	if len(matrix) <= point.Y {
+		return Null[T](), false
+	}
+	if len(matrix[0]) <= point.X {
 		return Null[T](), false
 	}
 	return matrix[point.Y][point.X], true
@@ -277,7 +316,6 @@ func (matrix Matrix[T]) Iterate() iter.Seq2[Coordinate, T] {
 		coordinate := Coordinate{}
 		for coordinate.Y = 0; coordinate.Y < len(matrix); coordinate.Y++ {
 			for coordinate.X = 0; coordinate.X < len(matrix); coordinate.X++ {
-				fmt.Println(coordinate)
 				v, _ := matrix.Get(coordinate)
 				if !yield(coordinate, v) {
 					return
@@ -285,6 +323,40 @@ func (matrix Matrix[T]) Iterate() iter.Seq2[Coordinate, T] {
 			}
 		}
 	}
+}
+
+func (matrix Matrix[T]) FloodFill(coordinate Coordinate) []Coordinate {
+	m := matrix.Copy()
+	return m.floodFill(coordinate)
+}
+
+func (matrix Matrix[T]) floodFill(coordinate Coordinate) []Coordinate {
+	val, ok := matrix.Get(coordinate)
+	if !ok {
+		return nil
+	}
+	if val == Null[T]() {
+		panic(fmt.Sprintf("called with zero value: X=%v Y=%v val=%v", coordinate.X, coordinate.Y, val))
+	}
+	c := []Coordinate{coordinate}
+	matrix.Set(coordinate, Null[T]())
+	// Up
+	if v, ok := matrix.Get(coordinate.Add(VecUp)); ok && v == val {
+		c = append(c, matrix.floodFill(coordinate.Add(VecUp))...)
+	}
+	// Left
+	if v, ok := matrix.Get(coordinate.Add(VecLeft)); ok && v == val {
+		c = append(c, matrix.floodFill(coordinate.Add(VecLeft))...)
+	}
+	// Right
+	if v, ok := matrix.Get(coordinate.Add(VecRight)); ok && v == val {
+		c = append(c, matrix.floodFill(coordinate.Add(VecRight))...)
+	}
+	// Down
+	if v, ok := matrix.Get(coordinate.Add(VecDown)); ok && v == val {
+		c = append(c, matrix.floodFill(coordinate.Add(VecDown))...)
+	}
+	return c
 }
 
 type Coordinate struct {
